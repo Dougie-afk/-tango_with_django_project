@@ -18,9 +18,6 @@ from django.contrib.auth import authenticate, login, logout
 
 
 def index(request):
-    # Construct dict to pass template engine as context
-    # Key boldmessage matches to {{ boldmessage }} in index template
-
     category_list_likes = Category.objects.order_by('-likes')[:5]
     page_list_views = Page.objects.order_by('-views')[:5]
 
@@ -52,6 +49,7 @@ def show_category(request, category_name_slug):
 
     return render(request, 'rango/category.html',context=context_dict)
 
+@login_required
 def add_category(request):
     form = CategoryForm()
     if request.method == 'POST':
@@ -64,6 +62,7 @@ def add_category(request):
             print(form.errors)
     return render(request, 'rango/add_category.html', {'form':form})
 
+@login_required
 def add_page(request,category_name_slug):
     try:
         category = Category.objects.get(slug=category_name_slug)
@@ -149,7 +148,7 @@ def user_login(request):
     
 @login_required
 def restricted(request):
-    return HttpResponse("Since youre logged in, you can see this text")
+    return render(request, 'rango/restricted.html')
 
 def user_logout(request):
     logout(request)
